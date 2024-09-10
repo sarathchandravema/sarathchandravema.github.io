@@ -1,2 +1,2 @@
 # axonx.github.io
-My personal blog pages
+Blog pages to multiply your knowledge on Deep Learning techniques.
