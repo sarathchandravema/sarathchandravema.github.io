@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Posts - Sarath Chandra Vema</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/github-dark.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="../" class="home-link">
+                    <i class="fas fa-home"></i>
+                </a>
+            </div>
+            <h1 class="page-title">Blog Posts</h1>
+            <ul class="nav-links">
+                <li><a href="../posts/index.html" class="active">Posts</a></li>
+                <li><a href="../projects/">Projects</a></li>
+                <li><a href="../about/">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="blog-posts">
+            <div class="posts-list">
+                <!-- Posts will be loaded dynamically -->
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Function to format date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Function to create post card
+        function createPostCard(post) {
+            return `
+                <article class="post-card">
+                    <div class="post-image">
+                        <img src="${post.image}" alt="${post.title}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjQwMCIgeT0iMjAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMzAiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4='">
+                    </div>
+                    <div class="post-content">
+                        <h3>${post.title}</h3>
+                        <div class="post-meta">
+                            <span class="read-time"><i class="far fa-clock"></i> ${post.readTime} read</span>
+                            <div class="post-tags">
+                                ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                        <p class="post-excerpt">${post.excerpt}</p>
+                        <a href="post-template.html?post=${post.path}" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+            `;
+        }
+
+        // Load and display posts
+        async function loadPosts() {
+            try {
+                const response = await fetch('./index.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                const postsList = document.querySelector('.posts-list');
+                
+                if (!data.posts || data.posts.length === 0) {
+                    postsList.innerHTML = `
+                        <div class="error-message">
+                            <p>No posts available yet. Check back soon!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Sort posts by date (newest first)
+                data.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                // Display posts
+                postsList.innerHTML = data.posts.map(post => createPostCard(post)).join('');
+            } catch (error) {
+                console.error('Error loading posts:', error);
+                document.querySelector('.posts-list').innerHTML = `
+                    <div class="error-message">
+                        <p>Unable to load posts. Please try again later.</p>
+                        <p class="error-details">${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load posts when the page loads
+        document.addEventListener('DOMContentLoaded', loadPosts);
+    </script>
+</body>
+</html> 

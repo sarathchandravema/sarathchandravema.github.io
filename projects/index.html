@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - Sarath Chandra Vema</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="../" class="home-link">
+                    <i class="fas fa-home"></i>
+                </a>
+            </div>
+            <h1 class="page-title">Projects</h1>
+            <ul class="nav-links">
+                <li><a href="../posts/index.html">Posts</a></li>
+                <li><a href="../projects/index.html" class="active">Projects</a></li>
+                <li><a href="../about/">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="blog-posts">
+            <div class="posts-list">
+                <!-- Projects will be loaded dynamically -->
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Function to create project card
+        function createProjectCard(project) {
+            return `
+                <article class="post-card">
+                    <div class="post-image">
+                        <img src="${project.image}" alt="${project.title}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjQwMCIgeT0iMjAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMzAiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4='">
+                    </div>
+                    <div class="post-content">
+                        <h3>${project.title}</h3>
+                        <div class="post-meta">
+                            <span class="read-time"><i class="fas fa-code-branch"></i> ${project.tech}</span>
+                            <div class="post-tags">
+                                ${project.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                        <p class="post-excerpt">${project.description}</p>
+                        <div class="project-links">
+                            ${project.github ? `<a href="${project.github}" class="read-more" target="_blank"><i class="fab fa-github"></i> View Code</a>` : ''}
+                            ${project.demo ? `<a href="${project.demo}" class="read-more" target="_blank"><i class="fas fa-external-link-alt"></i> Live Demo</a>` : ''}
+                            <a href="project-template.html?project=${project.title.toLowerCase().replace(/\s+/g, '-')}" class="read-more"><i class="fas fa-arrow-right"></i> Read More</a>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        // Load and display projects
+        async function loadProjects() {
+            try {
+                const response = await fetch('./index.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                const projectsList = document.querySelector('.posts-list');
+                
+                if (!data.projects || data.projects.length === 0) {
+                    projectsList.innerHTML = `
+                        <div class="error-message">
+                            <p>No projects available yet. Check back soon!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Display projects
+                projectsList.innerHTML = data.projects.map(project => createProjectCard(project)).join('');
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                document.querySelector('.posts-list').innerHTML = `
+                    <div class="error-message">
+                        <p>Unable to load projects. Please try again later.</p>
+                        <p class="error-details">${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load projects when the page loads
+        document.addEventListener('DOMContentLoaded', loadProjects);
+    </script>
+</body>
+</html> 

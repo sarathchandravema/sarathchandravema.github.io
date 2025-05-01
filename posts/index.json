@@ -1,0 +1,22 @@
+{
+    "posts": [
+        {
+            "title": "Getting Started with Deep Learning",
+            "date": "2024-03-15",
+            "tags": ["Deep Learning", "Machine Learning", "Python"],
+            "excerpt": "A comprehensive guide to getting started with deep learning, covering the basics of neural networks, popular frameworks, and practical examples.",
+            "readTime": "10 min",
+            "image": "deep-learning/cover.jpg",
+            "path": "deep-learning"
+        },
+        {
+            "title": "Python Basics for Data Science",
+            "date": "2024-03-10",
+            "tags": ["Python", "Data Science", "Programming"],
+            "excerpt": "Learn the essential Python concepts and libraries needed for data science, including NumPy, Pandas, and Matplotlib.",
+            "readTime": "8 min",
+            "image": "python-basics/cover.jpg",
+            "path": "python-basics"
+        }
+    ]
+} 

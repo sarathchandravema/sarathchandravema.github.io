@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Sarath Chandra Vema</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .about-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .about-section {
+            margin-bottom: 2rem;
+        }
+
+        .about-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .about-section p {
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .about-section ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .about-section li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .about-section li:before {
+            content: "•";
+            color: var(--primary-color);
+            position: absolute;
+            left: 0;
+        }
+
+        .connect-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .connect-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--primary-color);
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .connect-links a:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .connect-links i {
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="../" class="home-link">
+                    <i class="fas fa-home"></i>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../posts/index.html">Posts</a></li>
+                <li><a href="../projects/index.html">Projects</a></li>
+                <li><a href="../about/">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="about-container">
+            <div id="about-content"></div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        async function loadAboutContent() {
+            try {
+                const response = await fetch('./index.md');
+                if (!response.ok) throw new Error('Failed to load about content');
+                const markdown = await response.text();
+                
+                // Configure marked options
+                marked.setOptions({
+                    breaks: true,
+                    gfm: true
+                });
+
+                // Convert markdown to HTML
+                const html = marked.parse(markdown);
+                
+                // Update the content
+                document.getElementById('about-content').innerHTML = html;
+
+                // Add icons to connect links
+                const headings = document.querySelectorAll('h2');
+                headings.forEach(heading => {
+                    if (heading.textContent === 'Connect With Me') {
+                        const links = heading.nextElementSibling.querySelectorAll('a');
+                        links.forEach(link => {
+                            const icon = document.createElement('i');
+                            if (link.href.includes('github')) {
+                                icon.className = 'fab fa-github';
+                            } else if (link.href.includes('linkedin')) {
+                                icon.className = 'fab fa-linkedin';
+                            } else if (link.href.includes('twitter')) {
+                                icon.className = 'fab fa-twitter';
+                            }
+                            link.insertBefore(icon, link.firstChild);
+                        });
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading about content:', error);
+                document.getElementById('about-content').innerHTML = `
+                    <div class="error-message">
+                        <p>Unable to load content. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load content when page loads
+        document.addEventListener('DOMContentLoaded', loadAboutContent);
+    </script>
+</body>
+</html> 

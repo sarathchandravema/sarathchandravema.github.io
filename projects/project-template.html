@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Details - Sarath Chandra Vema</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="../" class="home-link">
+                    <i class="fas fa-home"></i>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../posts/index.html">Posts</a></li>
+                <li><a href="../projects/index.html" class="active">Projects</a></li>
+                <li><a href="../about/">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <article class="blog-post">
+            <div id="project-content">
+                <div class="loading">Loading project details...</div>
+            </div>
+        </article>
+    </main>
+
+    <script>
+        // Configure marked options
+        marked.setOptions({
+            highlight: function(code, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    return hljs.highlight(code, { language: lang }).value;
+                }
+                return hljs.highlightAuto(code).value;
+            },
+            breaks: true
+        });
+
+        async function loadProject() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectSlug = urlParams.get('project');
+            
+            if (!projectSlug) {
+                showError('No project specified');
+                return;
+            }
+
+            try {
+                // Load project metadata
+                const response = await fetch('./index.json');
+                if (!response.ok) throw new Error('Failed to load project data');
+                const data = await response.json();
+                
+                const project = data.projects.find(p => 
+                    p.title.toLowerCase().replace(/\s+/g, '-') === projectSlug
+                );
+
+                if (!project) {
+                    throw new Error('Project not found');
+                }
+
+                // Load project markdown content
+                const mdResponse = await fetch(`./${project.path}/index.md`);
+                if (!mdResponse.ok) throw new Error('Failed to load project content');
+                const markdown = await mdResponse.text();
+
+                // Update page title
+                document.title = `${project.title} - Sarath Chandra Vema`;
+
+                // Create project header
+                const header = `
+                    <header class="post-header">
+                        <h1>${project.title}</h1>
+                        <div class="post-meta">
+                            <span class="tech-stack"><i class="fas fa-code-branch"></i> ${project.tech}</span>
+                            <div class="post-tags">
+                                ${project.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="project-links">
+                            ${project.github ? `<a href="${project.github}" class="read-more" target="_blank"><i class="fab fa-github"></i> View Code</a>` : ''}
+                            ${project.demo ? `<a href="${project.demo}" class="read-more" target="_blank"><i class="fas fa-external-link-alt"></i> Live Demo</a>` : ''}
+                        </div>
+                    </header>
+                `;
+
+                // Convert markdown to HTML
+                const content = marked.parse(markdown);
+
+                // Update the page content
+                document.getElementById('project-content').innerHTML = header + content;
+
+                // Apply syntax highlighting
+                document.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightBlock(block);
+                });
+
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('project-content').innerHTML = `
+                <div class="error-message">
+                    <p>Error loading project: ${message}</p>
+                    <p class="error-details">Please try again later or contact the site administrator.</p>
+                </div>
+            `;
+        }
+
+        // Load project when the page loads
+        document.addEventListener('DOMContentLoaded', loadProject);
+    </script>
+</body>
+</html> 

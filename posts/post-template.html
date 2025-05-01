@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Post - Sarath Chandra Vema</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" id="meta-description" content="">
+    <meta name="keywords" id="meta-keywords" content="">
+    <meta property="og:title" id="og-title" content="">
+    <meta property="og:description" id="og-description" content="">
+    <meta property="og:type" content="article">
+    <meta property="article:published_time" id="article-date" content="">
+    <meta property="article:tag" id="article-tags" content="">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" id="twitter-title" content="">
+    <meta name="twitter:description" id="twitter-description" content="">
+    
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/github-dark.css">
+    <!-- Add marked.js for markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Add highlight.js for code syntax highlighting -->
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/lib/highlight.min.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="../" class="home-link">
+                    <i class="fas fa-home"></i>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../posts/index.html">Posts</a></li>
+                <li><a href="../projects/">Projects</a></li>
+                <li><a href="../about/">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <article class="blog-post">
+            <div class="post-header">
+                <h1 id="post-title"></h1>
+                <div class="post-meta">
+                    <span id="post-date"></span>
+                    <span id="post-read-time"></span>
+                </div>
+                <div id="post-tags" class="post-tags"></div>
+            </div>
+            <div id="post-content" class="post-content"></div>
+        </article>
+    </main>
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" id="json-ld">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "",
+        "datePublished": "",
+        "dateModified": "",
+        "author": {
+            "@type": "Person",
+            "name": "Sarath Chandra Vema"
+        },
+        "keywords": "",
+        "description": ""
+    }
+    </script>
+
+    <script>
+        // Configure marked.js
+        marked.setOptions({
+            highlight: function(code, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    return hljs.highlight(code, { language: lang }).value;
+                }
+                return hljs.highlightAuto(code).value;
+            },
+            breaks: true
+        });
+
+        // Function to get URL parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // Load and display post
+        async function loadPost() {
+            try {
+                const postSlug = getUrlParameter('post');
+                if (!postSlug) {
+                    throw new Error('No post specified');
+                }
+
+                // Fetch post metadata
+                const metaResponse = await fetch('./index.json');
+                if (!metaResponse.ok) {
+                    throw new Error('Failed to load post metadata');
+                }
+                const data = await metaResponse.json();
+                const post = data.posts.find(p => p.path === postSlug);
+
+                if (!post) {
+                    throw new Error('Post not found');
+                }
+
+                // Load post markdown content
+                const mdResponse = await fetch(`./${post.path}/index.md`);
+                if (!mdResponse.ok) throw new Error('Failed to load post content');
+                const markdown = await mdResponse.text();
+
+                // Update page title
+                document.title = `${post.title} - Sarath Chandra Vema`;
+
+                // Update meta tags
+                document.getElementById('meta-description').content = post.excerpt;
+                document.getElementById('meta-keywords').content = post.tags.join(', ');
+                document.getElementById('og-title').content = post.title;
+                document.getElementById('og-description').content = post.excerpt;
+                document.getElementById('article-date').content = post.date;
+                document.getElementById('article-tags').content = post.tags.join(', ');
+                document.getElementById('twitter-title').content = post.title;
+                document.getElementById('twitter-description').content = post.excerpt;
+
+                // Update JSON-LD
+                const jsonLd = {
+                    "@context": "https://schema.org",
+                    "@type": "BlogPosting",
+                    "headline": post.title,
+                    "datePublished": post.date,
+                    "dateModified": post.date,
+                    "author": {
+                        "@type": "Person",
+                        "name": "Sarath Chandra Vema"
+                    },
+                    "keywords": post.tags.join(', '),
+                    "description": post.excerpt
+                };
+                document.getElementById('json-ld').textContent = JSON.stringify(jsonLd);
+
+                // Update post header
+                document.getElementById('post-title').textContent = post.title;
+                document.getElementById('post-date').textContent = new Date(post.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                document.getElementById('post-read-time').textContent = `${post.readTime} read`;
+                document.getElementById('post-tags').innerHTML = post.tags
+                    .map(tag => `<span class="tag">${tag}</span>`)
+                    .join('');
+
+                // Convert markdown to HTML and display
+                document.getElementById('post-content').innerHTML = marked.parse(markdown);
+            } catch (error) {
+                console.error('Error loading post:', error);
+                document.querySelector('.blog-post').innerHTML = `
+                    <div class="error-message">
+                        <p>Unable to load post. Please try again later.</p>
+                        <p class="error-details">${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load post when page loads
+        document.addEventListener('DOMContentLoaded', loadPost);
+    </script>
+</body>
+</html> 

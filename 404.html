@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - Sarath Chandra Vema</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .error-container {
+            text-align: center;
+            padding: 4rem 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            line-height: 1;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .error-message {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            margin-bottom: 2rem;
+        }
+
+        .error-description {
+            color: var(--light-text);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .home-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 500;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .home-button:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .home-button i {
+            font-size: 1.2rem;
+        }
+
+        .suggestions {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .suggestions h2 {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .suggestion-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .suggestion-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--primary-color);
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .suggestion-link:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="/" class="home-link">
+                    <i class="fas fa-home"></i>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/posts/index.html">Posts</a></li>
+                <li><a href="/projects/index.html">Projects</a></li>
+                <li><a href="/about/">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="error-container">
+            <div class="error-code">404</div>
+            <h1 class="error-message">Page Not Found</h1>
+            <p class="error-description">
+                Oops! The page you're looking for seems to have wandered off into the digital wilderness. 
+                Don't worry, even the best algorithms sometimes get lost.
+            </p>
+            <a href="/" class="home-button">
+                <i class="fas fa-home"></i>
+                Back to Home
+            </a>
+
+            <div class="suggestions">
+                <h2>You might be interested in:</h2>
+                <div class="suggestion-links">
+                    <a href="/posts/index.html" class="suggestion-link">Blog Posts</a>
+                    <a href="/projects/index.html" class="suggestion-link">Projects</a>
+                    <a href="/about/" class="suggestion-link">About Me</a>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html> 

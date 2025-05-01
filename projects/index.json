@@ -1,0 +1,14 @@
+{
+    "projects": [
+        {
+            "title": "Neural Network Visualization Tool",
+            "description": "An interactive web application that helps users understand neural networks through visual representations. Features include real-time network architecture visualization, layer-by-layer activation maps, and training progress monitoring.",
+            "tech": "Python, TensorFlow, React",
+            "tags": ["Deep Learning", "Web Development", "Data Visualization"],
+            "image": "neural-viz/cover.jpg",
+            "github": "https://github.com/yourusername/neural-viz",
+            "demo": "https://neural-viz-demo.example.com",
+            "path": "neural-viz"
+        }
+    ]
+} 
